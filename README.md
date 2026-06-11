@@ -1,14 +1,14 @@
 # Dotfiles
 
-Configuração automatizada de ambiente de desenvolvimento para sistemas Linux (Debian/Ubuntu).
+Configuração automatizada de ambiente de desenvolvimento para sistemas Linux (Debian/Ubuntu, Fedora e Arch-based).
 
 ## Descrição
 
-Este projeto fornece um conjunto de scripts para configurar rapidamente um ambiente de desenvolvimento completo em sistemas Debian/Ubuntu. Ele automatiza a instalação de ferramentas essenciais, configura shells modernos (Zsh ou Fish), instala Docker, e aplica configurações personalizadas para Git e SSH.
+Este projeto fornece um conjunto de scripts para configurar rapidamente um ambiente de desenvolvimento completo em sistemas Debian/Ubuntu, Fedora e distros baseadas em Arch. Ele automatiza a instalação de ferramentas essenciais, configura shells modernos (Zsh ou Fish), instala Docker ou Podman conforme a distribuição, e aplica configurações personalizadas para Git, SSH e ZRAM.
 
 ## Recursos
 
-- **Docker**: Instalação automática do Docker Engine, CLI e Docker Compose
+- **Container Runtime**: Instalação automática do Docker ou Podman, conforme a distro
 - **Shells Modernos**: 
   - Zsh com Oh My Zsh e Powerlevel10k
   - Fish com Fisher e Tide theme
@@ -20,13 +20,14 @@ Este projeto fornece um conjunto de scripts para configurar rapidamente um ambie
 - **Gerenciamento de Pacotes**: Flatpak e Flathub
 - **Configuração SSH**: Scripts para setup de SSH
 - **Fontes Personalizadas**: Instalação automática de fontes TTF
+- **ZRAM**: Configuração automática de swap comprimido
 
 ## Instalação
 
 ### Instalação Rápida
 
 ```bash
-git clone https://github.com/cassimirodev/dotfiles.git
+git clone https://github.com/eduaardodev/dotfiles.git
 cd dotfiles
 chmod +x setup.sh
 ./setup.sh
@@ -35,18 +36,20 @@ chmod +x setup.sh
 ### O que acontece durante a instalação?
 
 1. **Detecção de Sistema**: O script detecta automaticamente seu sistema operacional
-2. **Instalação do Docker**: Configura o Docker Engine e adiciona seu usuário ao grupo docker
-3. **Instalação de Dependências**: Instala Git, Node.js, build tools, e outras ferramentas essenciais
-4. **Configuração de Fontes**: Instala fontes personalizadas do diretório `assets/fonts/ttf`
-5. **Configuração Git**: Define nome de usuário, email e preferências globais
-6. **Configuração SSH**: Executa scripts de configuração SSH
-7. **Seleção de Shell**: Permite escolher entre Zsh, Fish ou manter o shell atual
+2. **Instalação por Distro**: Executa o instalador correto para Debian/Ubuntu, Fedora ou Arch
+3. **Container Runtime**: Configura Docker ou Podman e adiciona seu usuário ao grupo necessário
+4. **Instalação de Dependências**: Instala Git, Node.js, build tools, OpenJDK e outras ferramentas essenciais
+5. **Instalação de Aplicativos**: Baixa apps de uso diário via pacote nativo ou Flatpak
+6. **Configuração de Fontes**: Instala fontes personalizadas do diretório `assets/fonts/ttf`
+7. **Configuração Git**: Define nome de usuário, email e preferências globais
+8. **Configuração SSH**: Executa scripts de configuração SSH
+9. **Seleção de Shell**: Permite escolher entre Zsh, Fish ou manter o shell atual
 
 ### Opções de Shell
 
 Durante a instalação, você poderá escolher um dos seguintes shells:
 
-#### 1. Zsh + Powerlevel10k 
+#### 1. Zsh + Powerlevel10k
 - Shell robusto e amplamente usado
 - Oh My Zsh para gerenciamento de plugins
 - Tema Powerlevel10k para interface visual
@@ -76,9 +79,15 @@ dotfiles/
 │   ├── zsh.sh           # Setup do Zsh
 │   └── fish.sh          # Setup do Fish
 └── installers/
-    └── debian/
-        ├── base.sh      # Instalação de pacotes base
-        └── docker.sh    # Instalação do Docker
+  ├── arch/
+  │   ├── base.sh      # Instalação de pacotes base no Arch
+  │   └── docker.sh    # Instalação do Docker no Arch
+  ├── debian/
+  │   ├── base.sh      # Instalação de pacotes base no Debian/Ubuntu
+  │   └── docker.sh    # Instalação do Docker no Debian/Ubuntu
+  └── fedora/
+    ├── base.sh      # Instalação de pacotes base no Fedora
+    └── podman.sh    # Instalação do Podman no Fedora
 ```
 
 ##  Uso
@@ -96,6 +105,9 @@ Se você deseja executar apenas partes específicas da configuração:
 ```bash
 # Instalar apenas o Docker
 ./installers/debian/docker.sh
+
+# Instalar apenas o Docker no Arch
+./installers/arch/docker.sh
 
 # Configurar apenas o Git
 ./configs/git.sh
@@ -137,7 +149,7 @@ Coloque arquivos `.ttf` no diretório `assets/fonts/ttf/` antes de executar o sc
 
 ### Adicionar Mais Pacotes
 
-Edite `installers/debian/base.sh` para incluir pacotes adicionais na instalação.
+Edite o instalador da sua distro em `installers/debian/base.sh`, `installers/fedora/base.sh` ou `installers/arch/base.sh` para incluir pacotes adicionais na instalação.
 
 ## Solução de Problemas
 
@@ -158,6 +170,14 @@ sudo usermod -aG docker $USER
 
 Certifique-se de ter feito logout e login novamente após a instalação.
 
+### Docker não inicia no Arch
+
+Verifique se o serviço foi habilitado corretamente:
+```bash
+sudo systemctl enable --now docker
+sudo systemctl status docker
+```
+
 ### Fontes não aparecem
 
 Execute manualmente o cache de fontes:
@@ -168,7 +188,7 @@ fc-cache -fv
 ## Notas
 
 - Este projeto está configurado para o usuário `cassimirodev` por padrão. **Antes de usar, edite `configs/git.sh`** para ajustar seu nome de usuário e email do Git.
-- O suporte para Arch Linux está planejado mas ainda não implementado.
+- O suporte para Arch Linux agora está implementado com instaladores próprios em `installers/arch/`.
 - Alguns pacotes requerem confirmação durante a instalação.
 
 ## Licença
@@ -185,4 +205,4 @@ This project is licensed under the terms specified in the [LICENSE](LICENSE) fil
 
 ---
 
-Desenvolvido por [cassimirodev](https://github.com/cassimirodev)
+Desenvolvido por [eduaardodev](https://github.com/eduaardodev)
