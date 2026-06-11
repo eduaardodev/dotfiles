@@ -38,7 +38,13 @@ elif [ -f /etc/debian_version ]; then
 
 elif [ -f /etc/arch-release ]; then
     DISTRO="arch"
-    warn "Sistema Arch Linux detectado (Não implementado)."
+    info "Sistema Arch Linux detectado."
+
+    log "Iniciando instalação do Docker..."
+    ./installers/arch/docker.sh
+
+    log "Iniciando instalação de Apps e Dependências..."
+    ./installers/arch/base.sh
 else
     error "Sistema não suportado."
     exit 1
@@ -73,6 +79,9 @@ case $SHELL_OPT in
         elif [ "$DISTRO" == "fedora" ]; then
             log "Instalando pacote zsh..."
             sudo dnf install -y zsh
+        elif [ "$DISTRO" == "arch" ]; then
+            log "Instalando pacote zsh..."
+            sudo pacman -S --noconfirm --needed zsh
         fi
         
         ./configs/zsh.sh
@@ -91,6 +100,9 @@ case $SHELL_OPT in
         elif [ "$DISTRO" == "fedora" ]; then
             log "Instalando pacote fish..."
             sudo dnf install -y fish
+        elif [ "$DISTRO" == "arch" ]; then
+            log "Instalando pacote fish..."
+            sudo pacman -S --noconfirm --needed fish
         fi
         
         ./configs/fish.sh
